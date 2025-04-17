@@ -13,12 +13,12 @@ func ListCmd(namespaces bool) error {
 
 	var listDir string
 	if namespaces {
-		listDir, err = getCurrentNamespaceSymlink()
+		listDir, err = getNamespacesDir()
 		if err != nil {
 			return err
 		}
 	} else {
-		listDir, err = getNamespacesDir()
+		listDir, err = getCurrentNamespaceSymlink()
 		if err != nil {
 			return err
 		}

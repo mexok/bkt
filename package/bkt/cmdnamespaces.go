@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-func NamespacesCmd(namespace string, create bool) error {
+func NamespaceCmd(namespace string, create bool) error {
 	err := defaultSetup()
 	if err != nil {
 		return err
@@ -25,7 +25,7 @@ func NamespacesCmd(namespace string, create bool) error {
 			return errors.New(fmt.Sprintf("Namespace '%s' already exists", namespace))
 		}
 	} else if !create {
-		return errors.New(fmt.Sprintf("Namespace '%s' does not exist", namespace))
+		return errors.New(fmt.Sprintf("Namespace '%s' does not exist, use -c flag to create new", namespace))
 	} else {
 		err = os.MkdirAll(namespacePath, FILE_DIR_PERMISSION)
 		if err != nil {
