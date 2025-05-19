@@ -17,9 +17,11 @@ func main() {
 	namespaceFlagSet := pflag.NewFlagSet("namespace", pflag.ContinueOnError)
 	namespaceFlagSet.BoolVarP(&create, "create", "c", false, "Create namespace instead")
 
+	var long bool
 	var namespaces bool
 	listFlagSet := pflag.NewFlagSet("list", pflag.ContinueOnError)
-	listFlagSet.BoolVarP(&namespaces, "namespaces", "n", false, "List namespaces instead")
+	listFlagSet.BoolVarP(&long, "", "l", false, "Use long format")
+	listFlagSet.BoolVarP(&namespaces, "namespaces", "n", false, "List namespaces instead. Not compatible with long format.")
 
 	var namespace bool
 	var yes bool
@@ -64,7 +66,7 @@ func main() {
 				bkt.PrintListHelp(listFlagSet)
 				os.Exit(1)
 			}
-			err = bkt.ListCmd(namespaces)
+			err = bkt.ListCmd(namespaces, long)
 		}
 	case "d", "de", "del", "dele", "delet", "delete":
 		err = deleteFlagSet.Parse(os.Args[2:])
