@@ -14,6 +14,7 @@ func PrintGlobalHelp() {
 	fmt.Println(" * g[et]       ... returns a saved directory")
 	fmt.Println(" * u[se]       ... switch between namespaces")
 	fmt.Println(" * l[ist], ls  ... list labels and namespaces")
+	fmt.Println(" * o[verview]  ... shortcut for 'bkt ls -ln'")
 	fmt.Println(" * d[elete]    ... deletes labels and namespaces")
 	fmt.Println("Use bkt help <subcommand> to show help for a specific subcommand")
 }
@@ -46,6 +47,11 @@ func PrintListHelp(flagSet *pflag.FlagSet) {
 	fmt.Println("")
 	fmt.Println("Options:")
 	flagSet.PrintDefaults()
+}
+
+func PrintOverviewHelp() {
+	fmt.Println("Usage: bkt o[verview]")
+	fmt.Println("Shortcut for 'bkt ls -ln'")
 }
 
 func PrintDeleteHelp(flagSet *pflag.FlagSet) {

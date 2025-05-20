@@ -68,6 +68,12 @@ func main() {
 			}
 			err = bkt.ListCmd(namespaces, long)
 		}
+	case "o", "ov", "ove", "over", "overv", "overvi", "overvie", "overview":
+		if len(os.Args) != 2 {
+			bkt.PrintOverviewHelp()
+			os.Exit(1)
+		}
+		err = bkt.ListCmd(true, true)
 	case "d", "de", "del", "dele", "delet", "delete":
 		err = deleteFlagSet.Parse(os.Args[2:])
 		if err != nil {
@@ -97,6 +103,8 @@ func main() {
 			bkt.PrintUseHelp(useFlagSet)
 		case "l", "li", "lis", "list", "ls":
 			bkt.PrintListHelp(listFlagSet)
+		case "o", "ov", "ove", "over", "overv", "overvi", "overvie", "overview":
+			bkt.PrintOverviewHelp()
 		case "d", "de", "del", "dele", "delet", "delete":
 			bkt.PrintDeleteHelp(deleteFlagSet)
 		default:
