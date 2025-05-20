@@ -1,16 +1,13 @@
 package bkt
 
 import (
-	"errors"
 	"fmt"
 	"os"
+	"path"
+	"path/filepath"
 )
 
 func ListCmd(namespaces bool, longformat bool) error {
-	if namespaces && longformat {
-		return errors.New("Long format is currently not supported for namespaces")
-	}
-
 	err := defaultSetup()
 	if err != nil {
 		return err
@@ -34,22 +31,53 @@ func ListCmd(namespaces bool, longformat bool) error {
 		return err
 	}
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
+	var current string
+	if namespaces {
+		symlink, err := getCurrentNamespaceSymlink()
+		if err != nil {
+			return err
+		}
+		current, err = filepath.EvalSymlinks(symlink)
+		if err != nil {
+			return err
+		}
+	} else {
+		current, err = os.Getwd()
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, entry := range entries {
 		if longformat {
-			dir, err := Get(entry.Name())
-			if err != nil {
-				dir = err.Error()
+			var dir string
+			if namespaces {
+				dir = path.Join(listDir, entry.Name())
+			} else {
+				dir, err = Get(entry.Name())
+				if err != nil {
+					return err
+				}
 			}
+
 			pre := "[ ]"
-			if cwd == dir {
+			if current == dir {
 				pre = "[*]"
 			}
-			fmt.Println(fmt.Sprintf("%s %s -> %s", pre, entry.Name(), dir))
+
+			post := dir
+			if namespaces {
+				namespaceLabels, err := os.ReadDir(dir)
+				if err != nil {
+					return err
+				}
+				labelText := "labels"
+				if len(namespaceLabels) == 1 {
+					labelText = "label"
+				}
+				post = fmt.Sprintf("%d %s", len(namespaceLabels), labelText)
+			}
+			fmt.Println(fmt.Sprintf("%s %s -> %s", pre, entry.Name(), post))
 		} else {
 			fmt.Println(entry.Name())
 		}
