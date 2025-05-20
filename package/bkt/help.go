@@ -12,8 +12,8 @@ func PrintGlobalHelp() {
 	fmt.Println("Possible values for subcommand:")
 	fmt.Println(" * s[ave]      ... saves directories using labels")
 	fmt.Println(" * g[et]       ... returns a saved directory")
-	fmt.Println(" * n[amespace] ... handles namespaces")
-	fmt.Println(" * l[ist]      ... list labels and namespaces")
+	fmt.Println(" * u[se]       ... switch between namespaces")
+	fmt.Println(" * l[ist], ls  ... list labels and namespaces")
 	fmt.Println(" * d[elete]    ... deletes labels and namespaces")
 	fmt.Println("Use bkt help <subcommand> to show help for a specific subcommand")
 }
@@ -31,8 +31,8 @@ func PrintGetHelp() {
 	fmt.Println("Prints saved location of label. Exits with non-zero if label does not exist.")
 }
 
-func PrintNamespaceHelp(flagSet *pflag.FlagSet) {
-	fmt.Println("Usage: bkt n[amespace] [options] <namespace>")
+func PrintUseHelp(flagSet *pflag.FlagSet) {
+	fmt.Println("Usage: bkt u[se] [options] <namespace>")
 	fmt.Println("Switch to namespace")
 	fmt.Println("")
 	fmt.Println("Options:")

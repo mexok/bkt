@@ -14,13 +14,13 @@ func main() {
 	saveFlagSet.BoolVarP(&force, "force", "f", false, "force saving, overwriting previous labels")
 
 	var create bool
-	namespaceFlagSet := pflag.NewFlagSet("namespace", pflag.ContinueOnError)
-	namespaceFlagSet.BoolVarP(&create, "create", "c", false, "Create namespace instead")
+	useFlagSet := pflag.NewFlagSet("use", pflag.ContinueOnError)
+	useFlagSet.BoolVarP(&create, "create", "c", false, "Create namespace instead")
 
 	var long bool
 	var namespaces bool
 	listFlagSet := pflag.NewFlagSet("list", pflag.ContinueOnError)
-	listFlagSet.BoolVarP(&long, "", "l", false, "Use long format")
+	listFlagSet.BoolVarP(&long, "long", "l", false, "Use long format")
 	listFlagSet.BoolVarP(&namespaces, "namespaces", "n", false, "List namespaces instead. Not compatible with long format.")
 
 	var namespace bool
@@ -50,14 +50,14 @@ func main() {
 			os.Exit(1)
 		}
 		err = bkt.GetCmd(os.Args[2])
-	case "n", "na", "nam", "name", "names", "namesp", "namespa", "namespac", "namespace":
-		err = namespaceFlagSet.Parse(os.Args[2:])
+	case "u", "us", "use":
+		err = useFlagSet.Parse(os.Args[2:])
 		if err == nil {
-			if len(namespaceFlagSet.Args()) != 1 {
-				bkt.PrintNamespaceHelp(namespaceFlagSet)
+			if len(useFlagSet.Args()) != 1 {
+				bkt.PrintUseHelp(useFlagSet)
 				os.Exit(1)
 			}
-			err = bkt.NamespaceCmd(namespaceFlagSet.Arg(0), create)
+			err = bkt.UseCmd(useFlagSet.Arg(0), create)
 		}
 	case "l", "li", "lis", "list", "ls":
 		err = listFlagSet.Parse(os.Args[2:])
@@ -93,8 +93,8 @@ func main() {
 			bkt.PrintSaveHelp(saveFlagSet)
 		case "g", "ge", "get":
 			bkt.PrintGetHelp()
-		case "n", "na", "nam", "name", "names", "namesp", "namespa", "namespac", "namespace":
-			bkt.PrintNamespaceHelp(namespaceFlagSet)
+		case "u", "us", "use":
+			bkt.PrintUseHelp(useFlagSet)
 		case "l", "li", "lis", "list", "ls":
 			bkt.PrintListHelp(listFlagSet)
 		case "d", "de", "del", "dele", "delet", "delete":

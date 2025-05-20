@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-func NamespaceCmd(namespace string, create bool) error {
+func UseCmd(namespace string, create bool) error {
 	err := defaultSetup()
 	if err != nil {
 		return err
