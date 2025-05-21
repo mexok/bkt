@@ -32,8 +32,9 @@ func main() {
 	var namespace bool
 	var yes bool
 	deleteFlagSet := pflag.NewFlagSet("delete", pflag.ContinueOnError)
-	deleteFlagSet.BoolVarP(&namespace, "namespace", "n", false, "Deletes current namespace and switches to default namespaces")
+	deleteFlagSet.BoolVarP(&namespace, "namespace", "n", false, "Deletes namespace and switches to default namespace if current namespace is deleted")
 	deleteFlagSet.BoolVarP(&yes, "yes", "y", false, "Confirm to delete. Only required for deletion of namespace")
+	deleteFlagSet.StringVarP(&namespaceToUse, "use", "u", "", "Use different namespace for this operation instead of currently active namespace")
 
 	if len(os.Args) < 2 {
 		bkt.PrintGlobalHelp()
@@ -97,7 +98,7 @@ func main() {
 		} else if len(unparsed) == 1 {
 			label = unparsed[0]
 		}
-		err = bkt.DeleteCmd(label, namespace, yes)
+		err = bkt.DeleteCmd(label, namespace, yes, namespaceToUse)
 	case "h", "he", "hel", "help":
 		if len(os.Args) != 3 {
 			bkt.PrintGlobalHelp()
