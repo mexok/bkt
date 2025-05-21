@@ -10,8 +10,13 @@ import (
 
 func main() {
 	var force bool
+	namespaceToUse := ""
 	saveFlagSet := pflag.NewFlagSet("save", pflag.ContinueOnError)
 	saveFlagSet.BoolVarP(&force, "force", "f", false, "force saving, overwriting previous labels")
+	saveFlagSet.StringVarP(&namespaceToUse, "use", "u", "", "use different namespace for this operation instead of currently active namespace")
+
+	getFlagSet := pflag.NewFlagSet("get", pflag.ContinueOnError)
+	getFlagSet.StringVarP(&namespaceToUse, "use", "u", "", "use different namespace for this operation instead of currently active namespace")
 
 	var create bool
 	useFlagSet := pflag.NewFlagSet("use", pflag.ContinueOnError)
@@ -21,7 +26,8 @@ func main() {
 	var namespaces bool
 	listFlagSet := pflag.NewFlagSet("list", pflag.ContinueOnError)
 	listFlagSet.BoolVarP(&long, "long", "l", false, "Use long format")
-	listFlagSet.BoolVarP(&namespaces, "namespaces", "n", false, "List namespaces instead. Not compatible with long format.")
+	listFlagSet.BoolVarP(&namespaces, "namespaces", "n", false, "List namespaces instead")
+	listFlagSet.StringVarP(&namespaceToUse, "use", "u", "", "Use different namespace for this operation instead of currently active namespace")
 
 	var namespace bool
 	var yes bool
@@ -42,14 +48,17 @@ func main() {
 				bkt.PrintSaveHelp(saveFlagSet)
 				os.Exit(1)
 			}
-			err = bkt.SaveCmd(saveFlagSet.Arg(0), force)
+			err = bkt.SaveCmd(saveFlagSet.Arg(0), force, namespaceToUse)
 		}
 	case "g", "ge", "get":
-		if len(os.Args) != 3 {
-			bkt.PrintGetHelp()
-			os.Exit(1)
+		err = getFlagSet.Parse(os.Args[2:])
+		if err == nil {
+			if len(getFlagSet.Args()) != 1 {
+				bkt.PrintGetHelp(getFlagSet)
+				os.Exit(1)
+			}
+			err = bkt.GetCmd(getFlagSet.Arg(0), namespaceToUse)
 		}
-		err = bkt.GetCmd(os.Args[2])
 	case "u", "us", "use":
 		err = useFlagSet.Parse(os.Args[2:])
 		if err == nil {
@@ -66,14 +75,14 @@ func main() {
 				bkt.PrintListHelp(listFlagSet)
 				os.Exit(1)
 			}
-			err = bkt.ListCmd(namespaces, long)
+			err = bkt.ListCmd(namespaces, long, namespaceToUse)
 		}
 	case "o", "ov", "ove", "over", "overv", "overvi", "overvie", "overview":
 		if len(os.Args) != 2 {
 			bkt.PrintOverviewHelp()
 			os.Exit(1)
 		}
-		err = bkt.ListCmd(true, true)
+		err = bkt.ListCmd(true, true, "")
 	case "d", "de", "del", "dele", "delet", "delete":
 		err = deleteFlagSet.Parse(os.Args[2:])
 		if err != nil {
@@ -98,7 +107,7 @@ func main() {
 		case "s", "sa", "sav", "save":
 			bkt.PrintSaveHelp(saveFlagSet)
 		case "g", "ge", "get":
-			bkt.PrintGetHelp()
+			bkt.PrintGetHelp(getFlagSet)
 		case "u", "us", "use":
 			bkt.PrintUseHelp(useFlagSet)
 		case "l", "li", "lis", "list", "ls":

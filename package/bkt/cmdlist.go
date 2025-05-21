@@ -7,8 +7,13 @@ import (
 	"path/filepath"
 )
 
-func ListCmd(namespaces bool, longformat bool) error {
+func ListCmd(namespaces bool, longformat bool, namespaceToUse string) error {
 	err := defaultSetup()
+	if err != nil {
+		return err
+	}
+
+	namespacePath, err := resolveNamespacePathToUse(namespaceToUse)
 	if err != nil {
 		return err
 	}
@@ -20,10 +25,7 @@ func ListCmd(namespaces bool, longformat bool) error {
 			return err
 		}
 	} else {
-		listDir, err = getCurrentNamespaceSymlink()
-		if err != nil {
-			return err
-		}
+		listDir = namespacePath
 	}
 
 	entries, err := os.ReadDir(listDir)
@@ -33,11 +35,7 @@ func ListCmd(namespaces bool, longformat bool) error {
 
 	var current string
 	if namespaces {
-		symlink, err := getCurrentNamespaceSymlink()
-		if err != nil {
-			return err
-		}
-		current, err = filepath.EvalSymlinks(symlink)
+		current, err = filepath.EvalSymlinks(namespacePath)
 		if err != nil {
 			return err
 		}
@@ -54,7 +52,7 @@ func ListCmd(namespaces bool, longformat bool) error {
 			if namespaces {
 				dir = path.Join(listDir, entry.Name())
 			} else {
-				dir, err = Get(entry.Name())
+				dir, err = get(entry.Name(), namespacePath)
 				if err != nil {
 					return err
 				}

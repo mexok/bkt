@@ -7,17 +7,18 @@ import (
 	"path"
 )
 
-func SaveCmd(labelName string, force bool) error {
+func SaveCmd(labelName string, force bool, namespaceToUse string) error {
 	err := defaultSetup()
 	if err != nil {
 		return err
 	}
 
-	currentNamespaceSymlink, err := getCurrentNamespaceSymlink()
+	namespacePath, err := resolveNamespacePathToUse(namespaceToUse)
 	if err != nil {
 		return err
 	}
-	label := path.Join(currentNamespaceSymlink, labelName)
+
+	label := path.Join(namespacePath, labelName)
 
 	stat, err := os.Lstat(label)
 	if err == nil && stat.Mode()&os.ModeSymlink > 0 {

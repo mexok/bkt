@@ -27,9 +27,12 @@ func PrintSaveHelp(flagSet *pflag.FlagSet) {
 	flagSet.PrintDefaults()
 }
 
-func PrintGetHelp() {
+func PrintGetHelp(flagSet *pflag.FlagSet) {
 	fmt.Println("Usage: bkt g[et] <label>")
 	fmt.Println("Prints saved location of label. Exits with non-zero if label does not exist.")
+	fmt.Println("")
+	fmt.Println("Options:")
+	flagSet.PrintDefaults()
 }
 
 func PrintUseHelp(flagSet *pflag.FlagSet) {
