@@ -1,0 +1,9 @@
+#compdef l
+
+_arguments '1: :->label'
+
+case "$state" in
+    label)
+        compadd `bkt ls`
+        ;;
+esac

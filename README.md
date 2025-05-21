@@ -16,3 +16,4 @@ Setup
 (compiled for amd64).
 2) include `alias.sh` into your local shell - (tested with zsh, but other shells
 should work too)
+3) Optional if you are using zshrc and want autocompletion: Place _l into your $fpath
